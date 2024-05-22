@@ -1,0 +1,7 @@
+.idea/*
+data/*
+logs/*
+config/db/*.sql
+test/
+laravel/src
+
