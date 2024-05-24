@@ -4,4 +4,9 @@ logs/*
 config/db/*.sql
 test/
 laravel/src
-
+laravel/log
+.env
+wordpress/src/*
+wordpress/certbot-etc/*
+wordpress/dbdata/*
+wordpress/logs/*
