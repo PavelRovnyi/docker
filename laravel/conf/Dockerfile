@@ -32,10 +32,6 @@ WORKDIR /var/www/laravel
 
 # Копіювання файлів з хостової машини до контейнера
 COPY ./src /var/www/laravel
-COPY ./test-www /var/www/laravel/test-www
-
-# Створення нової папки
-RUN mkdir -p /var/www/laravel/TEST_FOLDER
 
 # Створення необхідних директорій і встановлення прав доступу
 RUN mkdir -p /var/www/laravel/storage /var/www/laravel/bootstrap/cache && \
