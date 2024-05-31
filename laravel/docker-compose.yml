@@ -1,48 +1,54 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  nginx:
-    image: "nginx:stable-alpine"
-    ports:
-      - "8000:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro    
-      - ./src:/var/www/laravel
-      - ./logs/nginx:/var/log/nginx
-    depends_on:
-      - php
-      - mysql
-
   php:
     build:
-      context: dockerfiles
-      dockerfile: ./php.Dockerfile
+      context: .
+      dockerfile: conf/Dockerfile
+    container_name: laravel_php
+    working_dir: /var/www/laravel
+    user: "www-data"
     volumes:
       - ./src:/var/www/laravel
+      - ./conf/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - php_logs:/var/log/php
+    env_file:
+      - .env
+    networks:
+      - laravel
 
-  mysql:
-    image: "mysql:8.0"
+  nginx:
+    image: nginx:alpine
+    container_name: laravel_nginx
+    restart: unless-stopped
     ports:
-      - "3316:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: laravel_db
-      MYSQL_USER: laravel
-      MYSQL_PASSWORD: password
-    volumes:
-      - ./logs/mysql:/var/log/mysql
-
-  composer:
-    build:
-      context: dockerfiles
-      dockerfile: composer.Dockerfile
+      - "8080:80"
     volumes:
       - ./src:/var/www/laravel
+      - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - nginx_logs:/var/log/nginx
+    networks:
+      - laravel
 
-  artisan:
-    build:
-      context: dockerfiles
-      dockerfile: ./php.Dockerfile
+  db:
+    image: mysql:5.7
+    container_name: laravel_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
     volumes:
-      - ./src:/var/www/laravel
-    entrypoint: ["php", "/var/www/laravel/artisan"]
+      - ./dbdata:/var/lib/mysql
+      - mysql_logs:/var/log/mysql
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  dbdata:
+  php_logs:
+  mysql_logs:
+  nginx_logs:

@@ -10,3 +10,8 @@ wordpress/src/*
 wordpress/certbot-etc/*
 wordpress/dbdata/*
 wordpress/logs/*
+
+dbdata
+dbdata/*
+
+test*
